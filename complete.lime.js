@@ -104,10 +104,20 @@ function completely(container, config) {
         var rows = [];
         var ix = 0;
         var oldIndex = -1;
-        
-        var onMouseOver =  function() { this.style.outline = '1px solid #ddd'; }
-        var onMouseOut =   function() { this.style.outline = '0'; }
-        var onMouseDown =  function() { p.hide(); p.onmouseselection(this.__hint); }
+       
+        // Since these functions were tighed to the object attributes
+        // (with the corresponding names) the value of "this" is will
+        // be the global window object. I can't image why this has
+        // worked. Or has it??
+        // 
+        // See:
+        // https://developer.mozilla.org/en/docs/Web/API/EventTarget.addEventListener
+        // var onMouseOver =  function() { this.style.outline = '1px solid #ddd'; }
+        // var onMouseOut =   function() { this.style.outline = '0'; }
+        // var onMouseDown =  function() { p.hide(); p.onmouseselection(this.__hint); }
+        var onMouseOver =  function(ths) { ths.style.outline = '1px solid #ddd'; }
+        var onMouseOut =   function(ths) { ths.style.outline = '0'; }
+        var onMouseDown =  function(ths) { p.hide(); p.onmouseselection(ths.__hint); }
         
         var p = {
             hide :  function() { elem.style.visibility = 'hidden'; }, 
@@ -125,9 +135,12 @@ function completely(container, config) {
                     if (array[i].indexOf(token)!==0) { continue; }
                     var divRow =document.createElement('div');
                     divRow.style.color = config.color;
-                    divRow.onmouseover = onMouseOver; 
-                    divRow.onmouseout =  onMouseOut;
-                    divRow.onmousedown = onMouseDown; 
+                    // divRow.onmouseover = onMouseOver; 
+                    divRow.addEventListener("mouseover", function(){ onMouseOver(this); });
+                    // divRow.onmouseout =  onMouseOut;
+                    divRow.addEventListener("mouseout", function(){ onMouseOut(this); });
+                    // divRow.onmousedown = onMouseDown; 
+                    divRow.addEventListener("mousedown", function(){ onMouseDown(this); });
                     divRow.__hint =    array[i];
                     divRow.innerHTML = token+'<b>'+array[i].substring(token.length)+'</b>';
                     rows.push(divRow);
