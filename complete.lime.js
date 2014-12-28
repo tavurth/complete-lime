@@ -131,8 +131,10 @@ function completely(container, config) {
                 var distanceToBottom = vph - rect.bottom -6;  // distance from the browser border.
                 
                 rows = [];
+                var tokenRegex = new RegExp("^"+token,"i");
                 for (var i=0;i<array.length;i++) {
-                    if (array[i].indexOf(token)!==0) { continue; }
+                    // if (array[i].indexOf(token)!==0) { continue; }
+                    if (!tokenRegex.test(array[i])) { continue; }        // <-- case independent match
                     var divRow =document.createElement('div');
                     divRow.style.color = config.color;
                     // divRow.onmouseover = onMouseOver; 
@@ -265,9 +267,11 @@ function completely(container, config) {
             
             // updating the hint. 
             txtHint.value ='';
+            var tokenRegex = new RegExp("^"+token,"i");
             for (var i=0;i<optionsLength;i++) {
                 var opt = options[i];
-                if (opt.indexOf(token)===0) {         // <-- how about upperCase vs. lowercase
+                // if (opt.indexOf(token)===0) {         // <-- how about upperCase vs. lowercase
+                if (tokenRegex.test(opt)) {         // <-- case independent match
                     txtHint.value = leftSide +opt;
                     break;
                 }
