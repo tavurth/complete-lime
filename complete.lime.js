@@ -1,12 +1,12 @@
 /**
- * complete.ly 1.0.0
+ * complete.lime 1.0.1
  * MIT Licensing
  * Copyright (c) 2013 Lorenzo Puccetti
  * 
  * This Software shall be used for doing good things, not bad things.
  * 
  * Forked to complete.lime.js 2014-12-27, Lennart Borgman
-**/  
+ **/  
 function completely(container, config) {
     config = config || {};
     config.fontSize =                       config.fontSize   || '16px';
@@ -104,7 +104,7 @@ function completely(container, config) {
         var rows = [];
         var ix = 0;
         var oldIndex = -1;
-       
+        
         // Since these functions were tighed to the object attributes
         // (with the corresponding names) the value of "this" is will
         // be the global window object. I can't image why this has
@@ -121,6 +121,7 @@ function completely(container, config) {
         
         var p = {
             hide :  function() { elem.style.visibility = 'hidden'; }, 
+            isHidden : function() { return (elem.style.visibility === 'hidden'); }, 
             refresh : function(token, array) {
                 elem.style.visibility = 'hidden';
                 ix = 0;
@@ -224,10 +225,10 @@ function completely(container, config) {
         // Used to encode an HTML string into a plain text.
         // taken from http://stackoverflow.com/questions/1219860/javascript-jquery-html-encoding
         spacer.innerHTML = String(text).replace(/&/g, '&amp;')
-                                       .replace(/"/g, '&quot;')
-                                       .replace(/'/g, '&#39;')
-                                       .replace(/</g, '&lt;')
-                                       .replace(/>/g, '&gt;');
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
         return spacer.getBoundingClientRect().right;
     }
     
@@ -250,10 +251,10 @@ function completely(container, config) {
             txtInput.value = text; 
         },
         getText : function() {
-        	return txtInput.value; 
+            return txtInput.value; 
         },
         hideDropDown : function() {
-        	dropDownController.hide();
+            dropDownController.hide();
         },
         repaint : function() {
             var text = txtInput.value;
@@ -288,7 +289,7 @@ function completely(container, config) {
     /**
      * Register a callback function to detect changes to the content of the input-type-text.
      * Those changes are typically followed by user's action: a key-stroke event but sometimes it might be a mouse click.
-    **/
+     **/
     var registerOnTextChange = function(txt, callback) {
         registerOnTextChangeOldValue = txt.value;
         var handler = function() {
@@ -340,21 +341,26 @@ function completely(container, config) {
         }
         
         if (keyCode == 39 || keyCode == 35 || keyCode == 9) { // right,  end, tab  (autocomplete triggered)
-        	if (keyCode == 9) { // for tabs we need to ensure that we override the default behaviour: move to the next focusable HTML-element 
-           	    e.preventDefault();
-                e.stopPropagation();
-                if (txtHint.value.length == 0) {
-                	rs.onTab(); // tab was called with no action.
-                	            // users might want to re-enable its default behaviour or handle the call somehow.
+            if (keyCode == 9) { // for tabs we need to ensure that we override the default behaviour: move to the next focusable HTML-element 
+                console.log("tab hint=", txtHint.value, " input=", txtInput.value);
+                // if (txtHint.value.length == 0) {
+                if ((txtHint.value.length == txtInput.value.length || txtHint.value == 0)
+                    && dropDownController.isHidden())
+                {
+                    rs.onTab(); // tab was called with no action.
+                    return;
+                    // users might want to re-enable its default behaviour or handle the call somehow.
                 }
+           	e.preventDefault();
+                e.stopPropagation();
             }
             if (txtHint.value.length > 0) { // if there is a hint
                 dropDownController.hide();
                 txtInput.value = txtHint.value;
                 var hasTextChanged = registerOnTextChangeOldValue != txtInput.value
                 registerOnTextChangeOldValue = txtInput.value; // <-- to avoid dropDown to appear again. 
-                                                          // for example imagine the array contains the following words: bee, beef, beetroot
-                                                          // user has hit enter to get 'bee' it would be prompted with the dropDown again (as beef and beetroot also match)
+                // for example imagine the array contains the following words: bee, beef, beetroot
+                // user has hit enter to get 'bee' it would be prompted with the dropDown again (as beef and beetroot also match)
                 if (hasTextChanged) {
                     rs.onChange(txtInput.value); // <-- forcing it.
                 }
@@ -379,8 +385,8 @@ function completely(container, config) {
                 txtInput.value = txtHint.value;
                 var hasTextChanged = registerOnTextChangeOldValue != txtInput.value
                 registerOnTextChangeOldValue = txtInput.value; // <-- to avoid dropDown to appear again. 
-                                                          // for example imagine the array contains the following words: bee, beef, beetroot
-                                                          // user has hit enter to get 'bee' it would be prompted with the dropDown again (as beef and beetroot also match)
+                // for example imagine the array contains the following words: bee, beef, beetroot
+                // user has hit enter to get 'bee' it would be prompted with the dropDown again (as beef and beetroot also match)
                 if (hasTextChanged) {
                     rs.onChange(txtInput.value); // <-- forcing it.
                 }
@@ -395,7 +401,7 @@ function completely(container, config) {
             txtHint.value = leftSide+m;
             return; 
         } 
-            
+        
         if (keyCode == 38 ) {    // up
             var m = dropDownController.move(-1);
             if (m == '') { rs.onArrowUp(); }
@@ -404,7 +410,7 @@ function completely(container, config) {
             e.stopPropagation();
             return; 
         }
-            
+        
         // it's important to reset the txtHint on key down.
         // think: user presses a letter (e.g. 'x') and never releases... you get (xxxxxxxxxxxxxxxxx)
         // and you would see still the hint
