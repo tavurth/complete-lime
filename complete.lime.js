@@ -342,11 +342,12 @@ function completely(container, config) {
         
         if (keyCode == 39 || keyCode == 35 || keyCode == 9) { // right,  end, tab  (autocomplete triggered)
             if (keyCode == 9) { // for tabs we need to ensure that we override the default behaviour: move to the next focusable HTML-element 
-                console.log("tab hint=", txtHint.value, " input=", txtInput.value);
+                // console.log("tab hint=", txtHint.value, " input=", txtInput.value);
                 // if (txtHint.value.length == 0) {
-                if ((txtHint.value.length == txtInput.value.length || txtHint.value == 0)
-                    && dropDownController.isHidden())
-                {
+                // if ((txtHint.value.length == txtInput.value.length || txtHint.value == 0)
+                //     && dropDownController.isHidden())
+                // {
+                if (dropDownController.isHidden()) {
                     rs.onTab(); // tab was called with no action.
                     return;
                     // users might want to re-enable its default behaviour or handle the call somehow.
