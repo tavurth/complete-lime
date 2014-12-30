@@ -423,20 +423,23 @@ function completely(container, config) {
         
     };
 
-    var clickHandler = function(e) {
+    var clickHandler = function() {
         // In some browsers there is an "x" to the left in the input
         // field which clears the field. Reset the txtHint if the input is empty.
         //
         // This seems to be necessary to do in a timer, at least in Chrome and IE now.
         // console.log("txtInput clicked", txtInput.value);
-        setTimeout(function() {
-            // console.log("txtInput clicked timer", txtInput.value);
-            if (txtInput.value.length === 0) { txtHint.value =''; }
-        }, 0);
+        setTimeout(function() { if (txtInput.value.length === 0) { txtHint.value =''; } }, 0);
+    };
+
+    var blurHandler = function() {
+        dropDownController.hide();
+        txtHint.value ='';
     };
     
     txtInput.addEventListener("keydown",  keyDownHandler, false);
-    txtInput.addEventListener("blur", function() { dropDownController.hide(); });
+    // txtInput.addEventListener("blur", function() { dropDownController.hide(); });
+    txtInput.addEventListener("blur", blurHandler);
     txtInput.addEventListener("focus", function() { rs.repaint(); });
     txtInput.addEventListener("click", clickHandler);
     return rs;
