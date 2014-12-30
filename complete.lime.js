@@ -20,7 +20,8 @@ function completely(container, config) {
     config.dropDownOnHoverBackgroundColor = config.dropDownOnHoverBackgroundColor || '#ddd';
     
     var txtInput = document.createElement('input');
-    txtInput.type ='text';
+    // txtInput.type ='text';
+    txtInput.type ='search';
     txtInput.spellcheck = false; 
     txtInput.style.fontSize =        config.fontSize;
     txtInput.style.fontFamily =      config.fontFamily;
@@ -41,6 +42,9 @@ function completely(container, config) {
     txtHint.style.boxShadow =   'none';
     txtHint.style.color = config.hintColor;
     
+    txtInput.placeholder = "Enter search string";
+    txtInput.autofocus ='';
+    txtInput.autocomplete ='search';
     txtInput.style.backgroundColor ='transparent';
     txtInput.style.verticalAlign = 'top';
     txtInput.style.position = 'relative';
@@ -195,7 +199,7 @@ function completely(container, config) {
         txtInput.value = txtHint.value = leftSide+text; 
         rs.onChange(txtInput.value); // <-- forcing it.
         registerOnTextChangeOldValue = txtInput.value; // <-- ensure that mouse down will not show the dropDown now.
-        setTimeout(function() { txtInput.focus(); },0);  // <-- I need to do this for IE 
+        // setTimeout(function() { txtInput.focus(); },0);  // <-- I need to do this for IE 
     }
     
     wrapper.appendChild(dropDown);
@@ -265,6 +269,10 @@ function completely(container, config) {
             // breaking text in leftSide and token.
             var token = text.substring(startFrom);
             leftSide =  text.substring(0,startFrom);
+            if (token.length + leftSide.length === 0) {
+                dropDownController.hide();
+                return;
+            }
             
             // updating the hint. 
             txtHint.value ='';
@@ -309,15 +317,9 @@ function completely(container, config) {
         // only if the text.value was effectively changed. 
         //  
         // 
-        if (txt.addEventListener) {
-            txt.addEventListener("input",  handler, false);
-            txt.addEventListener('keyup',  handler, false);
-            txt.addEventListener('change', handler, false);
-        } else { // is this a fair assumption: that attachEvent will exist ?
-            txt.attachEvent('oninput', handler); // IE<9
-            txt.attachEvent('onkeyup', handler); // IE<9
-            txt.attachEvent('onchange',handler); // IE<9
-        }
+        txt.addEventListener("input",  handler, false);
+        txt.addEventListener('keyup',  handler, false);
+        txt.addEventListener('change', handler, false);
     };
     
     
@@ -334,7 +336,11 @@ function completely(container, config) {
         if (keyCode == 34) { return; } // page down (do nothing);
         
         if (keyCode == 27) { //escape
-            dropDownController.hide();
+            e.preventDefault(); // We will empty the input field ourself - timing etc
+            if (!dropDownController.isHidden()) {
+                dropDownController.hide();
+            }
+            txtInput.value = "";
             txtHint.value = txtInput.value; // ensure that no hint is left.
             txtInput.focus(); 
             return; 
@@ -419,10 +425,7 @@ function completely(container, config) {
         
     };
     
-    if (txtInput.addEventListener) {
-        txtInput.addEventListener("keydown",  keyDownHandler, false);
-    } else { // is this a fair assumption: that attachEvent will exist ?
-        txtInput.attachEvent('onkeydown', keyDownHandler); // IE<9
-    }
+    txtInput.addEventListener("keydown",  keyDownHandler, false);
+    txtInput.addEventListener("blur", function() { dropDownController.hide(); });
     return rs;
 }
