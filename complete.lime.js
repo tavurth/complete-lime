@@ -373,6 +373,7 @@ function completely(container, config) {
         
         if (keyCode == 13) {       // enter  (autocomplete triggered)
             if (txtHint.value.length == 0) { // if there is a hint
+                if (rs.isTouchDevice) txtInput.blur(); // Get rid of virtual keyboard.
                 rs.onEnter();
             } else {
                 var wasDropDownHidden = (dropDown.style.visibility == 'hidden');
