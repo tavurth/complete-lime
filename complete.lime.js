@@ -106,7 +106,7 @@ function completely(container, config) {
     dropDown.style.overflowX= 'hidden';
     dropDown.style.whiteSpace = 'pre';
     // dropDown.style.overflowY = 'scroll';  // note: this might be ugly when the scrollbar is not required. however in this way the width of the dropDown takes into account
-    dropDown.style.overflowY = 'auto';  // note: was too ugly ;-)
+    dropDown.style.overflowY = 'auto';  // note: was too ugly, let the browser handle it! ;-)
     
     
     var createDropDownController = function(elem) {
@@ -116,8 +116,8 @@ function completely(container, config) {
         
         // See:
         // https://developer.mozilla.org/en/docs/Web/API/EventTarget.addEventListener
-        var mouseOverHandler =  function(ths) { ths.style.outline = '1px solid #ddd'; }
-        var mouseOutHandler =   function(ths) { ths.style.outline = '0'; }
+        var mouseOverHandler =  function(ths) { ths.style.outline = '1px solid #ddd'; console.log("over", ths); }
+        var mouseOutHandler =   function(ths) { ths.style.outline = '0'; console.log("out"); }
         var mouseDownHandler =  function(ths) { p.hide(); p.onmouseselection(ths.__hint); }
         
         var p = {
@@ -134,14 +134,16 @@ function completely(container, config) {
                 
                 rows = [];
                 var tokenRegex = new RegExp("^"+token,"i");
+                var paddingLeft = config.padding;
+                var paddingRight = config.padding;
                 for (var i=0;i<array.length;i++) {
                     // if (array[i].indexOf(token)!==0) { continue; }
                     if (!tokenRegex.test(array[i])) { continue; }        // <-- case independent match
                     var divRow =document.createElement('div');
                     divRow.style.color = config.color;
                     divRow.style.lineHeight = config.height;
-                    divRow.style.paddingLeft = config.padding;
-                    divRow.style.paddingRight = config.padding;
+                    divRow.style.paddingLeft = paddingLeft;
+                    divRow.style.paddingRight = paddingRight;
                     divRow.tabIndex = '0';
                     // divRow.style.verticalAlign = "middle";
                     divRow.addEventListener("mouseover", function(){ mouseOverHandler(this); });
@@ -195,7 +197,10 @@ function completely(container, config) {
         txtInput.value = txtHint.value = leftSide+text; 
         rs.onChange(txtInput.value); // <-- forcing it.
         registerOnTextChangeOldValue = txtInput.value; // <-- ensure that mouse down will not show the dropDown now.
-        // setTimeout(function() { txtInput.focus(); },0);  // <-- I need to do this for IE 
+        // Something seems wrong in Chrome (and in IE).
+        // txtInput becomes the document.activeElement, but still focus is not there.
+        // Fix-me: File a bug report.
+        setTimeout(function() { txtInput.focus(); },0);
     }
     
     wrapper.appendChild(dropDown);
@@ -326,7 +331,6 @@ function completely(container, config) {
     
     
     var keyDownHandler = function(e) {
-        // e = e || window.event;
         var keyCode = e.keyCode;
         
         if (keyCode == 33) { return; } // page up (do nothing)
