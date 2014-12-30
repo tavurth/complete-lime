@@ -250,7 +250,7 @@ function completely(container, config) {
         hint  :  txtHint,       // For easy access to the HTML elements to the final user (customizations)
         dropDown :  dropDown,   // For easy access to the HTML elements to the final user (customizations)
         prompt : prompt,
-        // isTouchDevice : "ontouchstart" in window, // Not needed at the moment
+        isTouchDevice : "ontouchstart" in window,
         setText : function(text) {
             txtHint.value = text;
             txtInput.value = text; 
@@ -433,7 +433,7 @@ function completely(container, config) {
     };
 
     var blurHandler = function() {
-        dropDownController.hide();
+        if (!rs.isTouchDevice) dropDownController.hide();
         txtHint.value ='';
     };
     
