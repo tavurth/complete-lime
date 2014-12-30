@@ -18,5 +18,5 @@ window.addEventListener("load", function(){
     auto.onEnter = function() {
         log("onEnter called, .getText()=>\""+auto.getText()+"\"");
     };
-    log("isTouchDevice: "+auto.isTouchDevice);
+    // log("isTouchDevice: "+auto.isTouchDevice);
 });

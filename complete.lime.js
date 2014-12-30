@@ -1,11 +1,13 @@
 /**
- * complete.lime 1.0.1
+ * complete.lime 1.0.2
  * MIT Licensing
  * Copyright (c) 2013 Lorenzo Puccetti
  * 
  * This Software shall be used for doing good things, not bad things.
  * 
  * Forked to complete.lime.js 2014-12-27, Lennart Borgman
+ * Copyright (c) 2014 Lennart Borgman (for my small additions only, of course)
+ *
  **/  
 function completely(container, config) {
     config = config || {};
@@ -22,7 +24,6 @@ function completely(container, config) {
     config.dropDownOnHoverBackgroundColor = config.dropDownOnHoverBackgroundColor || '#ddd';
     
     var txtInput = document.createElement('input');
-    // txtInput.type ='text';
     txtInput.type ='search';
     txtInput.spellcheck = false; 
     txtInput.style.fontSize =        config.fontSize;
@@ -114,10 +115,10 @@ function completely(container, config) {
         var ix = 0;
         var oldIndex = -1;
         
-        // See:
-        // https://developer.mozilla.org/en/docs/Web/API/EventTarget.addEventListener
-        var mouseOverHandler =  function(ths) { ths.style.outline = '1px solid #ddd'; console.log("over", ths); }
-        var mouseOutHandler =   function(ths) { ths.style.outline = '0'; console.log("out"); }
+        // See: https://developer.mozilla.org/en/docs/Web/API/EventTarget.addEventListener
+        // Fix-me: The outline does not show as expected, but it is there.
+        var mouseOverHandler =  function(ths) { ths.style.outline = '1px solid #00f'; }
+        var mouseOutHandler =   function(ths) { ths.style.outline = '0'; }
         var mouseDownHandler =  function(ths) { p.hide(); p.onmouseselection(ths.__hint); }
         
         var p = {
@@ -137,7 +138,6 @@ function completely(container, config) {
                 var paddingLeft = config.padding;
                 var paddingRight = config.padding;
                 for (var i=0;i<array.length;i++) {
-                    // if (array[i].indexOf(token)!==0) { continue; }
                     if (!tokenRegex.test(array[i])) { continue; }        // <-- case independent match
                     var divRow =document.createElement('div');
                     divRow.style.color = config.color;
@@ -145,7 +145,6 @@ function completely(container, config) {
                     divRow.style.paddingLeft = paddingLeft;
                     divRow.style.paddingRight = paddingRight;
                     divRow.tabIndex = '0';
-                    // divRow.style.verticalAlign = "middle";
                     divRow.addEventListener("mouseover", function(){ mouseOverHandler(this); });
                     divRow.addEventListener("mouseout",  function(){ mouseOutHandler(this); });
                     divRow.addEventListener("mousedown", function(){ mouseDownHandler(this); });
@@ -217,7 +216,7 @@ function completely(container, config) {
             spacer.style.position = 'fixed';
             spacer.style.outline = '0';
             spacer.style.margin =  '0';
-            spacer.style.padding = '0'; // config.padding;
+            spacer.style.padding = '0';
             spacer.style.border =  '0';
             spacer.style.left = '0';
             spacer.style.whiteSpace = 'pre';
@@ -246,12 +245,12 @@ function completely(container, config) {
         onChange:     function() { rs.repaint() }, // defaults to repainting.
         startFrom:    0,
         options:      [],
-        wrapper : wrapper,      // Only to allow  easy access to the HTML elements to the final user (possibly for minor customizations)
-        input :  txtInput,      // Only to allow  easy access to the HTML elements to the final user (possibly for minor customizations) 
-        hint  :  txtHint,       // Only to allow  easy access to the HTML elements to the final user (possibly for minor customizations)
-        dropDown :  dropDown,         // Only to allow  easy access to the HTML elements to the final user (possibly for minor customizations)
+        wrapper : wrapper,      // For easy access to the HTML elements to the final user (customizations)
+        input :  txtInput,      // For easy access to the HTML elements to the final user (customizations) 
+        hint  :  txtHint,       // For easy access to the HTML elements to the final user (customizations)
+        dropDown :  dropDown,   // For easy access to the HTML elements to the final user (customizations)
         prompt : prompt,
-        // isTouchDevice : "ontouchstart" in window,
+        // isTouchDevice : "ontouchstart" in window, // Not needed at the moment
         setText : function(text) {
             txtHint.value = text;
             txtInput.value = text; 
@@ -281,8 +280,7 @@ function completely(container, config) {
             var tokenRegex = new RegExp("^"+token,"i");
             for (var i=0;i<optionsLength;i++) {
                 var opt = options[i];
-                // if (opt.indexOf(token)===0) {         // <-- how about upperCase vs. lowercase
-                if (tokenRegex.test(opt)) {         // <-- case independent match
+                if (tokenRegex.test(opt)) { // <-- case independent match
                     txtHint.value = leftSide +opt;
                     break;
                 }
@@ -310,13 +308,14 @@ function completely(container, config) {
             }
         };
 
-        //  
+
         // For user's actions, we listen to both input events and key up events
         // It appears that input events are not enough so we defensively listen to key up events too.
         // source: http://help.dottoro.com/ljhxklln.php
         //
-        // The cost of listening to three sources should be negligible as the handler will invoke callback function
-        // only if the text.value was effectively changed. 
+        // The cost of listening to three sources should be negligible
+        // as the handler will invoke callback function only if the
+        // text.value was effectively changed.
         //  
         // 
         txt.addEventListener("input",  handler, false);
@@ -348,8 +347,11 @@ function completely(container, config) {
         }
         
         if (keyCode == 39 || keyCode == 35 || keyCode == 9) { // right,  end, tab  (autocomplete triggered)
-            if (keyCode == 9) { // for tabs we need to ensure that we override the default behaviour: move to the next focusable HTML-element 
-                // users might want to re-enable its default behaviour or handle the call somehow.
+            if (keyCode == 9) {
+                // for tabs we need to ensure that we override the
+                // default behaviour: move to the next focusable
+                // HTML-element since users might want to re-enable its
+                // default behaviour or handle the call somehow.
                 rs.onTab(); // tab was called with no action.
                 return;
             }
@@ -358,8 +360,10 @@ function completely(container, config) {
                 txtInput.value = txtHint.value;
                 var hasTextChanged = registerOnTextChangeOldValue != txtInput.value
                 registerOnTextChangeOldValue = txtInput.value; // <-- to avoid dropDown to appear again. 
-                // for example imagine the array contains the following words: bee, beef, beetroot
-                // user has hit enter to get 'bee' it would be prompted with the dropDown again (as beef and beetroot also match)
+                // for example imagine the array contains the
+                // following words: bee, beef, beetroot user has hit
+                // enter to get 'bee' it would be prompted with the
+                // dropDown again (as beef and beetroot also match)
                 if (hasTextChanged) {
                     rs.onChange(txtInput.value); // <-- forcing it.
                 }
@@ -384,8 +388,10 @@ function completely(container, config) {
                 txtInput.value = txtHint.value;
                 var hasTextChanged = registerOnTextChangeOldValue != txtInput.value
                 registerOnTextChangeOldValue = txtInput.value; // <-- to avoid dropDown to appear again. 
-                // for example imagine the array contains the following words: bee, beef, beetroot
-                // user has hit enter to get 'bee' it would be prompted with the dropDown again (as beef and beetroot also match)
+                // for example imagine the array contains the
+                // following words: bee, beef, beetroot user has hit
+                // enter to get 'bee' it would be prompted with the
+                // dropDown again (as beef and beetroot also match)
                 if (hasTextChanged) {
                     rs.onChange(txtInput.value); // <-- forcing it.
                 }
