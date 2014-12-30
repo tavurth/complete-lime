@@ -1,3 +1,6 @@
+body, body * { font-size: 14px; }
+h1 { font-size: 22px; }
+
 #complete-lime-div {
     border: 1px solid red;
 }
