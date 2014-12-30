@@ -11,6 +11,8 @@ function completely(container, config) {
     config = config || {};
     config.fontSize =                       config.fontSize   || '16px';
     config.fontFamily =                     config.fontFamily || 'sans-serif';
+    config.height =                         config.height || '32px';
+    config.padding =                        config.padding || '8px';
     config.promptInnerHTML =                config.promptInnerHTML || ''; 
     config.color =                          config.color || '#333';
     config.hintColor =                      config.hintColor || '#aaa';
@@ -25,15 +27,18 @@ function completely(container, config) {
     txtInput.spellcheck = false; 
     txtInput.style.fontSize =        config.fontSize;
     txtInput.style.fontFamily =      config.fontFamily;
+    txtInput.style.height =          config.height;
+    txtInput.style.padding =         config.padding;
     txtInput.style.color =           config.color;
     txtInput.style.backgroundColor = config.backgroundColor;
     txtInput.style.width = '100%';
     txtInput.style.outline = '0';
     txtInput.style.border =  '0';
     txtInput.style.margin =  '0';
-    txtInput.style.padding = '0';
+    txtInput.style.verticalAlign = 'middle';
     
     var txtHint = txtInput.cloneNode(); 
+    txtHint.tabIndex = '-1';
     txtHint.disabled='';        
     txtHint.style.position = 'absolute';
     txtHint.style.top =  '0';
@@ -42,11 +47,10 @@ function completely(container, config) {
     txtHint.style.boxShadow =   'none';
     txtHint.style.color = config.hintColor;
     
-    txtInput.placeholder = "Enter search string";
-    txtInput.autofocus ='';
+    txtInput.placeholder = 'Enter search string';
+    txtInput.autofocus = true;
     txtInput.autocomplete ='search';
     txtInput.style.backgroundColor ='transparent';
-    txtInput.style.verticalAlign = 'top';
     txtInput.style.position = 'relative';
     
     var wrapper = document.createElement('div');
@@ -101,7 +105,8 @@ function completely(container, config) {
     dropDown.style.borderColor = config.dropDownBorderColor;
     dropDown.style.overflowX= 'hidden';
     dropDown.style.whiteSpace = 'pre';
-    dropDown.style.overflowY = 'scroll';  // note: this might be ugly when the scrollbar is not required. however in this way the width of the dropDown takes into account
+    // dropDown.style.overflowY = 'scroll';  // note: this might be ugly when the scrollbar is not required. however in this way the width of the dropDown takes into account
+    dropDown.style.overflowY = 'auto';  // note: was too ugly ;-)
     
     
     var createDropDownController = function(elem) {
@@ -109,19 +114,11 @@ function completely(container, config) {
         var ix = 0;
         var oldIndex = -1;
         
-        // Since these functions were tighed to the object attributes
-        // (with the corresponding names) the value of "this" is will
-        // be the global window object. I can't image why this has
-        // worked. Or has it??
-        // 
         // See:
         // https://developer.mozilla.org/en/docs/Web/API/EventTarget.addEventListener
-        // var onMouseOver =  function() { this.style.outline = '1px solid #ddd'; }
-        // var onMouseOut =   function() { this.style.outline = '0'; }
-        // var onMouseDown =  function() { p.hide(); p.onmouseselection(this.__hint); }
-        var onMouseOver =  function(ths) { ths.style.outline = '1px solid #ddd'; }
-        var onMouseOut =   function(ths) { ths.style.outline = '0'; }
-        var onMouseDown =  function(ths) { p.hide(); p.onmouseselection(ths.__hint); }
+        var mouseOverHandler =  function(ths) { ths.style.outline = '1px solid #ddd'; }
+        var mouseOutHandler =   function(ths) { ths.style.outline = '0'; }
+        var mouseDownHandler =  function(ths) { p.hide(); p.onmouseselection(ths.__hint); }
         
         var p = {
             hide :  function() { elem.style.visibility = 'hidden'; }, 
@@ -142,25 +139,24 @@ function completely(container, config) {
                     if (!tokenRegex.test(array[i])) { continue; }        // <-- case independent match
                     var divRow =document.createElement('div');
                     divRow.style.color = config.color;
-                    // divRow.onmouseover = onMouseOver; 
-                    divRow.addEventListener("mouseover", function(){ onMouseOver(this); });
-                    // divRow.onmouseout =  onMouseOut;
-                    divRow.addEventListener("mouseout", function(){ onMouseOut(this); });
-                    // divRow.onmousedown = onMouseDown; 
-                    divRow.addEventListener("mousedown", function(){ onMouseDown(this); });
+                    divRow.style.lineHeight = config.height;
+                    divRow.style.paddingLeft = config.padding;
+                    divRow.style.paddingRight = config.padding;
+                    divRow.tabIndex = '0';
+                    // divRow.style.verticalAlign = "middle";
+                    divRow.addEventListener("mouseover", function(){ mouseOverHandler(this); });
+                    divRow.addEventListener("mouseout",  function(){ mouseOutHandler(this); });
+                    divRow.addEventListener("mousedown", function(){ mouseDownHandler(this); });
                     divRow.__hint =    array[i];
                     divRow.innerHTML = token+'<b>'+array[i].substring(token.length)+'</b>';
                     rows.push(divRow);
                     elem.appendChild(divRow);
                 }
-                if (rows.length===0) {
-                    return; // nothing to show.
-                }
-                if (rows.length===1 && token === rows[0].__hint) {
-                    return; // do not show the dropDown if it has only one element which matches what we have just displayed.
-                }
-                
-                if (rows.length<2) return; 
+                if (rows.length===0) { return; } // nothing to show.
+                // do not show dropDown if it has only one element which matches what we display.
+                if (rows.length===1 && token === rows[0].__hint) { return; }
+                // if (rows.length<2) return; // Fix-me: Maybe better to show this? Touch. Completion.
+
                 p.highlight(0);
                 
                 if (distanceToTop > distanceToBottom*3) {        // Heuristic (only when the distance to the to top is 4 times more than distance to the bottom
@@ -216,7 +212,7 @@ function completely(container, config) {
             spacer.style.position = 'fixed';
             spacer.style.outline = '0';
             spacer.style.margin =  '0';
-            spacer.style.padding = '0';
+            spacer.style.padding = '0'; // config.padding;
             spacer.style.border =  '0';
             spacer.style.left = '0';
             spacer.style.whiteSpace = 'pre';
@@ -250,6 +246,7 @@ function completely(container, config) {
         hint  :  txtHint,       // Only to allow  easy access to the HTML elements to the final user (possibly for minor customizations)
         dropDown :  dropDown,         // Only to allow  easy access to the HTML elements to the final user (possibly for minor customizations)
         prompt : prompt,
+        // isTouchDevice : "ontouchstart" in window,
         setText : function(text) {
             txtHint.value = text;
             txtInput.value = text; 
@@ -329,7 +326,7 @@ function completely(container, config) {
     
     
     var keyDownHandler = function(e) {
-        e = e || window.event;
+        // e = e || window.event;
         var keyCode = e.keyCode;
         
         if (keyCode == 33) { return; } // page up (do nothing)
@@ -348,18 +345,9 @@ function completely(container, config) {
         
         if (keyCode == 39 || keyCode == 35 || keyCode == 9) { // right,  end, tab  (autocomplete triggered)
             if (keyCode == 9) { // for tabs we need to ensure that we override the default behaviour: move to the next focusable HTML-element 
-                // console.log("tab hint=", txtHint.value, " input=", txtInput.value);
-                // if (txtHint.value.length == 0) {
-                // if ((txtHint.value.length == txtInput.value.length || txtHint.value == 0)
-                //     && dropDownController.isHidden())
-                // {
-                if (dropDownController.isHidden()) {
-                    rs.onTab(); // tab was called with no action.
-                    return;
-                    // users might want to re-enable its default behaviour or handle the call somehow.
-                }
-           	e.preventDefault();
-                e.stopPropagation();
+                // users might want to re-enable its default behaviour or handle the call somehow.
+                rs.onTab(); // tab was called with no action.
+                return;
             }
             if (txtHint.value.length > 0) { // if there is a hint
                 dropDownController.hide();
@@ -427,5 +415,6 @@ function completely(container, config) {
     
     txtInput.addEventListener("keydown",  keyDownHandler, false);
     txtInput.addEventListener("blur", function() { dropDownController.hide(); });
+    txtInput.addEventListener("focus", function() { rs.repaint(); });
     return rs;
 }
