@@ -5,7 +5,7 @@ window.addEventListener("load", function(){
     	color:'#933',
     });
     auto.options = ['cocoa','coffee','orange'];
-    auto.repaint(); 
+    // auto.repaint(); 
     // setTimeout(function() { auto.input.focus(); },0);
 
     // Trace output

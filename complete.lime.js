@@ -416,9 +416,22 @@ function completely(container, config) {
         txtHint.value =''; // resets the txtHint. (it might be updated onKeyUp)
         
     };
+
+    var clickHandler = function(e) {
+        // In some browsers there is an "x" to the left in the input
+        // field which clears the field. Reset the txtHint if the input is empty.
+        //
+        // This seems to be necessary to do in a timer, at least in Chrome and IE now.
+        // console.log("txtInput clicked", txtInput.value);
+        setTimeout(function() {
+            // console.log("txtInput clicked timer", txtInput.value);
+            if (txtInput.value.length === 0) { txtHint.value =''; }
+        }, 0);
+    };
     
     txtInput.addEventListener("keydown",  keyDownHandler, false);
     txtInput.addEventListener("blur", function() { dropDownController.hide(); });
     txtInput.addEventListener("focus", function() { rs.repaint(); });
+    txtInput.addEventListener("click", clickHandler);
     return rs;
 }
