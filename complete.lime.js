@@ -382,6 +382,8 @@ function completely(container, config) {
                 if (wasDropDownHidden) {
                     txtHint.value = txtInput.value; // ensure that no hint is left.
                     txtInput.focus();
+                    // Fix-me: envelope onEnter with internal function and move blur there:
+                    if (rs.isTouchDevice) txtInput.blur(); // Get rid of virtual keyboard.
                     rs.onEnter();    
                     return; 
                 }
