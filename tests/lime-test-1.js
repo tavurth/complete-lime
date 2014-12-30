@@ -5,8 +5,8 @@ window.addEventListener("load", function(){
     	color:'#933',
     });
     auto.options = ['cocoa','coffee','orange'];
-    // auto.repaint(); 
-    setTimeout(function() { auto.input.focus(); },0); // See bug info in compile.lime.js
+    auto.repaint(); 
+    // setTimeout(function() { auto.input.focus(); },0);
 
     // Trace output
     var logDiv = document.getElementById("log");
