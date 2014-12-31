@@ -9,7 +9,7 @@
  * Copyright (c) 2014 Lennart Borgman (for my small additions only, of course)
  *
  **/  
-function completely(container, config) {
+function completeLime(container, config) {
     config = config || {};
     config.fontSize =                       config.fontSize   || '16px';
     config.fontFamily =                     config.fontFamily || 'sans-serif';
@@ -189,11 +189,14 @@ function completely(container, config) {
         };
         return p;
     }
+
+    function scrollToEnd() { txtInput.scrollLeft = 9000; txtHint.scrollLeft = txtInput.scrollLeft; }
     
     var dropDownController = createDropDownController(dropDown);
     
     dropDownController.onmouseselection = function(text) {
         txtInput.value = txtHint.value = leftSide+text; 
+        scrollToEnd();
         rs.onChange(txtInput.value); // <-- forcing it.
         registerOnTextChangeOldValue = txtInput.value; // <-- ensure that mouse down will not show the dropDown now.
         // Something seems wrong in Chrome (and in IE).
@@ -358,6 +361,7 @@ function completely(container, config) {
             if (txtHint.value.length > 0) { // if there is a hint
                 dropDownController.hide();
                 txtInput.value = txtHint.value;
+                scrollToEnd();
                 var hasTextChanged = registerOnTextChangeOldValue != txtInput.value
                 registerOnTextChangeOldValue = txtInput.value; // <-- to avoid dropDown to appear again. 
                 // for example imagine the array contains the
@@ -389,6 +393,7 @@ function completely(container, config) {
                 }
                 
                 txtInput.value = txtHint.value;
+                scrollToEnd();
                 var hasTextChanged = registerOnTextChangeOldValue != txtInput.value
                 registerOnTextChangeOldValue = txtInput.value; // <-- to avoid dropDown to appear again. 
                 // for example imagine the array contains the
@@ -407,6 +412,8 @@ function completely(container, config) {
             var m = dropDownController.move(+1);
             if (m == '') { rs.onArrowDown(); }
             txtHint.value = leftSide+m;
+            e.preventDefault();
+            e.stopPropagation();
             return; 
         } 
         
@@ -439,11 +446,27 @@ function completely(container, config) {
         if (!rs.isTouchDevice) dropDownController.hide();
         txtHint.value ='';
     };
+
+    var scrollHandlerDoIt = function() {
+        console.log("scroll", txtInput.scrollLeft, txtInput.scrollTop);
+        txtHint.scrollLeft = txtInput.scrollLeft;
+        txtHint.scrollTop = txtInput.scrollTop;
+    };
+    var scrollHandler = (function() {
+        var timer;
+        return function(txt) {
+            if (timer) return;
+            timer = setTimeout(function() { scrollHandlerDoIt(); timer = null; }, 50);
+        };
+    })();
     
-    txtInput.addEventListener("keydown",  keyDownHandler, false);
-    // txtInput.addEventListener("blur", function() { dropDownController.hide(); });
-    txtInput.addEventListener("blur", blurHandler);
-    txtInput.addEventListener("focus", function() { rs.repaint(); });
-    txtInput.addEventListener("click", clickHandler);
+    txtInput.addEventListener("blur",    function()  { scrollHandler(); blurHandler(); });
+    txtInput.addEventListener("change",  function()  { scrollHandler(); });
+    txtInput.addEventListener("click",   function()  { scrollHandler(); clickHandler(); });
+    txtInput.addEventListener("focus",   function()  { scrollHandler(); rs.repaint(); });
+    txtInput.addEventListener("input",   function()  { scrollHandler(); });
+    txtInput.addEventListener("keydown", function(e) { scrollHandler(); keyDownHandler(e); }, false);
+    txtInput.addEventListener("keyup",   function()  { scrollHandler(); });
+    // txtInput.addEventListener("scroll",  function() { scrollHandler(); });
     return rs;
 }

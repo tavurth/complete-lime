@@ -1,12 +1,19 @@
 window.addEventListener("load", function(){
-    var auto = completely(document.getElementById('complete-lime-div'), {
+    autoLime = completeLime(document.getElementById('complete-lime-div'), {
     	fontSize : '16px',
     	fontFamily : 'Arial',
     	color:'#933',
     });
-    auto.options = ['cocoa','coffee','orange'];
-    // auto.repaint(); 
-    // setTimeout(function() { auto.input.focus(); },0);
+    autoLime.options = [
+        'cocoa',
+        'coffee only',
+        'coffee with milk',
+        'coffee with milk and a lot',
+        'coffee with milk and a lot of cookies, maybe',
+        'coffee with milk and a lot of cookies, or',
+        'orange'];
+    // autoLime.repaint(); 
+    // setTimeout(function() { autoLime.input.focus(); },0);
 
     // Trace output
     var logDiv = document.getElementById("log");
@@ -15,8 +22,8 @@ window.addEventListener("load", function(){
         div.innerHTML = txt;
         logDiv.appendChild(div);
     }
-    auto.onEnter = function() {
-        log("onEnter called, .getText()=>\""+auto.getText()+"\"");
+    autoLime.onEnter = function() {
+        log("onEnter called, .getText()=>\""+autoLime.getText()+"\"");
     };
-    // log("isTouchDevice: "+auto.isTouchDevice);
+    // log("isTouchDevice: "+autoLime.isTouchDevice);
 });
