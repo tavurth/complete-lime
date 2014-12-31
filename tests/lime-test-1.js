@@ -8,10 +8,10 @@ window.addEventListener("load", function(){
     autoLime.options = [
         'cocoa',
         'coffee only',
-        'coffee with milk',
-        'coffee with milk and a lot',
-        'coffee with milk and a lot of cookies, maybe',
-        'coffee with milk and a lot of cookies, or',
+        'Coffee with milk',
+        'coffee with Milk and a loT',
+        'coFFee with milk and a lot of COOKIES, maybe',
+        'coffee wiTh milk and a lot of cookies, or',
         'orange'];
     // autoLime.repaint(); 
     // setTimeout(function() { autoLime.input.focus(); },0);
