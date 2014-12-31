@@ -5,6 +5,11 @@ h1 { font-size: 22px; }
 body { background: white; }
 
 #main {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+#test-1 {
     background: orange;
     padding: 14px;
 }
