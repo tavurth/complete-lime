@@ -10,7 +10,7 @@
  *
  **/  
 
-// fix-me: Something can loop sometimes after CR, but what???
+// fix-me: Something can loop sometimes after CR, but what??? Maybe it was the "change" event??
 
 function completeLime(container, config) {
     config = config || {};
@@ -164,13 +164,13 @@ function completeLime(container, config) {
                 p.highlight(0);
                 
                 if (distanceToTop > distanceToBottom*3) {        // Heuristic (only when the distance to the to top is 4 times more than distance to the bottom
-                    elem.style.maxHeight =  distanceToTop+'px';  // we display the dropDown on the top of the input text
+                    // elem.style.maxHeight =  distanceToTop+'px';  // we display the dropDown on the top of the input text
                     elem.style.top ='';
                     elem.style.bottom ='100%';
                 } else {
                     elem.style.top = '100%';  
                     elem.style.bottom = '';
-                    elem.style.maxHeight =  distanceToBottom+'px';
+                    // elem.style.maxHeight =  distanceToBottom+'px';
                 }
                 elem.style.visibility = 'visible';
             },
@@ -269,6 +269,7 @@ function completeLime(container, config) {
         hint  :  txtHint,       // For easy access to the HTML elements to the final user (customizations)
         dropDown :  dropDown,   // For easy access to the HTML elements to the final user (customizations)
         prompt : prompt,
+        // Fix-me: I want to detect here is virtual keyboard only, but there is no way to do that. Yet.
         isTouchDevice : "ontouchstart" in window,
         setText : function(text) {
             txtHint.value = text;
@@ -359,6 +360,10 @@ function completeLime(container, config) {
     
     
     var keyDownHandler = function(e) {
+        // Fix-me: replace when this is supported:
+        // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent.key
+        // console.log(e.keyCode, e.key);
+
         var keyCode = e.keyCode;
         
         if (keyCode == 33) { return; } // page up (do nothing)
