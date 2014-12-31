@@ -9,6 +9,10 @@ body { background: white; }
     margin-left: auto;
     margin-right: auto;
 }
+#preview-info {
+    background: #eee;
+    padding: 8px;
+}
 #test-1 {
     background: orange;
     padding: 14px;

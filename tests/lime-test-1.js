@@ -27,4 +27,7 @@ window.addEventListener("load", function(){
         log("onEnter called, .getText()=>\""+autoLime.getText()+"\"");
     };
     // log("isTouchDevice: "+autoLime.isTouchDevice);
+    if (window.location.host !== "htmlpreview.github.io") {
+        document.getElementById("preview-info").style.display = "block";
+    }
 });
