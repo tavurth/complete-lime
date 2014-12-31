@@ -1,15 +1,16 @@
 /**
- * complete.lime 1.0.3
+ * complete.lime 1.0.4
  * MIT Licensing
  * Copyright (c) 2013 Lorenzo Puccetti
  * 
  * This Software shall be used for doing good things, not bad things.
  * 
- * Forked to complete.lime.js 2014-12-27, Lennart Borgman
- * Copyright (c) 2014 Lennart Borgman (for my small additions only, of course)
+ * Forked complete.ly.js to complete.lime.js 2014-12-27, Lennart Borgman
+ * Copyright (c) 2015 Lennart Borgman (for my small additions only, of course)
  *
  **/  
 
+// fix-me: Something can loop sometimes after CR, but what???
 
 function completeLime(container, config) {
     config = config || {};
@@ -197,7 +198,9 @@ function completeLime(container, config) {
     var dropDownController = createDropDownController(dropDown);
     
     dropDownController.onmouseselection = function(text) {
-        txtInput.value = txtHint.value = leftSide+text; 
+        // txtInput.value = txtHint.value = leftSide+text; 
+        txtHint.value = leftSide+text; 
+        copyCarefully2txtInput(leftSide+text); 
         scrollToEnd();
         rs.onChange(txtInput.value); // <-- forcing it.
         registerOnTextChangeOldValue = txtInput.value; // <-- ensure that mouse down will not show the dropDown now.
@@ -247,6 +250,12 @@ function completeLime(container, config) {
         txtHint.value = str + txt.substring(str.length);
     }
 
+
+    function onEnterActions() {
+        if (rs.isTouchDevice) txtInput.blur(); // Get rid of virtual keyboard.
+        rs.onEnter();
+    }
+
     var rs = { 
         onArrowDown : function() {},               // defaults to no action.
         onArrowUp :   function() {},               // defaults to no action.
@@ -263,7 +272,8 @@ function completeLime(container, config) {
         isTouchDevice : "ontouchstart" in window,
         setText : function(text) {
             txtHint.value = text;
-            txtInput.value = text; 
+            // txtInput.value = text; 
+            copyCarefully2txtInput(text); 
         },
         getText : function() {
             return txtInput.value; 
@@ -338,6 +348,14 @@ function completeLime(container, config) {
     registerOnTextChange(txtInput,function(text) { // note the function needs to be wrapped as API-users will define their onChange
         rs.onChange(text);
     });
+
+    // Avoid triggering a change event if we can. I suspect this
+    // caused some looping, but I do not really understand what
+    // happened. I just saw something was looping.
+    function copyCarefully2txtInput(txt) {
+        if (txtInput.value === txt) return;
+        txtInput.value = txt;
+    }
     
     
     var keyDownHandler = function(e) {
@@ -350,8 +368,10 @@ function completeLime(container, config) {
             e.preventDefault(); // We will empty the input field ourself - timing etc
             if (!dropDownController.isHidden()) {
                 dropDownController.hide();
+            } else {
+                // txtInput.value = "";
+                copyCarefully2txtInput(""); 
             }
-            txtInput.value = "";
             txtHint.value = txtInput.value; // ensure that no hint is left.
             txtInput.focus(); 
             return; 
@@ -368,7 +388,8 @@ function completeLime(container, config) {
             }
             if (txtHint.value.length > 0) { // if there is a hint
                 dropDownController.hide();
-                txtInput.value = txtHint.value;
+                // txtInput.value = txtHint.value;
+                copyCarefully2txtInput(txtHint.value); 
                 scrollToEnd();
                 var hasTextChanged = registerOnTextChangeOldValue != txtInput.value
                 registerOnTextChangeOldValue = txtInput.value; // <-- to avoid dropDown to appear again. 
@@ -385,8 +406,9 @@ function completeLime(container, config) {
         
         if (keyCode == 13) {       // enter  (autocomplete triggered)
             if (txtHint.value.length == 0) { // if there is a hint
-                if (rs.isTouchDevice) txtInput.blur(); // Get rid of virtual keyboard.
-                rs.onEnter();
+                // if (rs.isTouchDevice) txtInput.blur(); // Get rid of virtual keyboard.
+                // rs.onEnter();
+                onEnterActions();
             } else {
                 var wasDropDownHidden = (dropDown.style.visibility == 'hidden');
                 dropDownController.hide();
@@ -394,15 +416,14 @@ function completeLime(container, config) {
                 if (wasDropDownHidden) {
                     txtHint.value = txtInput.value; // ensure that no hint is left.
                     txtInput.focus();
-                    // Fix-me: envelope onEnter with internal function
-                    // and move blur there. Or, make an option for
-                    // it??
-                    if (rs.isTouchDevice) txtInput.blur(); // Get rid of virtual keyboard.
-                    rs.onEnter();    
+                    // if (rs.isTouchDevice) txtInput.blur(); // Get rid of virtual keyboard.
+                    // rs.onEnter();    
+                    onEnterActions();
                     return; 
                 }
                 
-                txtInput.value = txtHint.value;
+                // txtInput.value = txtHint.value;
+                copyCarefully2txtInput(txtHint.value); 
                 scrollToEnd();
                 var hasTextChanged = registerOnTextChangeOldValue != txtInput.value
                 registerOnTextChangeOldValue = txtInput.value; // <-- to avoid dropDown to appear again. 
