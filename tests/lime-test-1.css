@@ -5,6 +5,7 @@ h1 { font-size: 22px; }
 
 #complete-lime-div {
     border: 1px solid red;
+    width: 200px;
 }
 #log {
     background: #ccc;
