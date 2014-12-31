@@ -8,26 +8,20 @@ body { background: white; }
     background: orange;
     padding: 14px;
 }
-#complete-lime {
+#complete-lime-container {
     display: flex;
     width: 240px;
     border: 1px solid #989898;
     background: white;
 }
-#complete-lime-div {
-}
-#complete-lime label {
-    margin: 0;
-    padding: 0;
-}
 
-#complete-lime span.icon {
+#complete-lime-container span.icon {
     flex: 0 0 26px;
     height: 32px;
     padding: 6px;
     padding-right: 0px;
 }
-#complete-lime svg.icon {
+#complete-lime-container svg.icon {
     width: 20px;
     height: 20px;
     stroke: #983413;
