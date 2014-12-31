@@ -2,11 +2,37 @@
 
 body, body * { font-size: 14px; }
 h1 { font-size: 22px; }
+body { background: white; }
 
-#complete-lime-div {
-    border: 1px solid red;
-    width: 200px;
+#main {
+    background: orange;
+    padding: 14px;
 }
+#complete-lime {
+    display: flex;
+    width: 240px;
+    border: 1px solid #989898;
+    background: white;
+}
+#complete-lime-div {
+}
+#complete-lime label {
+    margin: 0;
+    padding: 0;
+}
+
+#complete-lime span.icon {
+    flex: 0 0 26px;
+    height: 32px;
+    padding: 6px;
+    padding-right: 0px;
+}
+#complete-lime svg.icon {
+    width: 20px;
+    height: 20px;
+    stroke: #983413;
+}
+
 #log {
     background: #ccc;
     padding: 14px;

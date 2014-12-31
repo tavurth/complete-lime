@@ -19,19 +19,38 @@
     <script src="../complete.lime.js"></script>
     <script src="lime-test-1.js"></script>
 
-  <body>
-    <div id="header-div">
-      <h1>Test 1 for complete.lime.js</h1>
-      <p>
-        You can <a href="http://htmlpreview.github.io/?https://github.com/lborgman/complete-lime/blob/master/tests/lime-test-1.html"
-                   target="_blank">test this file directly on GitHub</a> (see
-        <a target="_blank"
-           href="http://stackoverflow.com/questions/6551446/can-i-run-html-files-directly-from-github-instead-of-just-viewing-their-source"
-           >Can I run HTML files directly from GitHub? - Stack Overflow</a>).
-      </p>
-      <hr>
-      <div id="complete-lime-div"></div>
-      <div id="log"></div>
-    </div>
-  </body>
+    <body>
+
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 150 150"
+           style="display:none;">
+        <defs>
+          <g id="lime-svg-search">
+            <circle cx="50" cy="50" r="43" xstroke="black" stroke-width="13" fill="none" />
+            <line x1="80" y1="80" x2="140" y2="140" xstroke="black" stroke-width="13" />
+          </g>
+        </defs>
+      </svg>
+
+
+
+      <div id="header-div">
+        <h1>Test 1 for complete.lime.js</h1>
+        <p>
+          You can <a href="http://htmlpreview.github.io/?https://github.com/lborgman/complete-lime/blob/master/tests/lime-test-1.html"
+                     target="_blank">test this file directly on GitHub</a> (see
+          <a target="_blank"
+             href="http://stackoverflow.com/questions/6551446/can-i-run-html-files-directly-from-github-instead-of-just-viewing-their-source"
+             >Can I run HTML files directly from GitHub? - Stack Overflow</a>).
+        </p>
+        <div id="main">
+          <div id="complete-lime">
+            <span class="icon">
+              <svg viewBox="0 0 150 150" class="icon"> <use xlink:href="#lime-svg-search"></use> </svg>
+            </span>
+            <div id="complete-lime-div"></div>
+          </div>
+        </div>
+        <div id="log"></div>
+      </div>
+    </body>
 </html>

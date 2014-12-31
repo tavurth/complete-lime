@@ -448,7 +448,7 @@ function completeLime(container, config) {
     };
 
     var scrollHandlerDoIt = function() {
-        console.log("scroll", txtInput.scrollLeft, txtInput.scrollTop);
+        // console.log("scroll", txtInput.scrollLeft, txtInput.scrollTop);
         txtHint.scrollLeft = txtInput.scrollLeft;
         txtHint.scrollTop = txtInput.scrollTop;
     };

@@ -4,6 +4,7 @@ window.addEventListener("load", function(){
     	fontFamily : 'Arial',
     	color:'#933',
     });
+    autoLime.input.placeholder = "Type 'c' or 'o' to test!";
     autoLime.options = [
         'cocoa',
         'coffee only',
