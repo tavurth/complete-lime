@@ -1,5 +1,5 @@
 /**
- * complete.lime 1.0.2
+ * complete.lime 1.0.3
  * MIT Licensing
  * Copyright (c) 2013 Lorenzo Puccetti
  * 
@@ -9,6 +9,8 @@
  * Copyright (c) 2014 Lennart Borgman (for my small additions only, of course)
  *
  **/  
+
+
 function completeLime(container, config) {
     config = config || {};
     config.fontSize =                       config.fontSize   || '16px';
@@ -238,8 +240,13 @@ function completeLime(container, config) {
             .replace(/>/g, '&gt;');
         return spacer.getBoundingClientRect().right;
     }
-    
-    
+   
+    // Ensure case in input and hint are the same:
+    function setHintValue(txt) {
+        var str = txtInput.value;
+        txtHint.value = str + txt.substring(str.length);
+    }
+
     var rs = { 
         onArrowDown : function() {},               // defaults to no action.
         onArrowUp :   function() {},               // defaults to no action.
@@ -284,7 +291,8 @@ function completeLime(container, config) {
             for (var i=0;i<optionsLength;i++) {
                 var opt = options[i];
                 if (tokenRegex.test(opt)) { // <-- case independent match
-                    txtHint.value = leftSide +opt;
+                    // txtHint.value = leftSide +opt;
+                    setHintValue( leftSide + opt );
                     break;
                 }
             }
@@ -386,7 +394,9 @@ function completeLime(container, config) {
                 if (wasDropDownHidden) {
                     txtHint.value = txtInput.value; // ensure that no hint is left.
                     txtInput.focus();
-                    // Fix-me: envelope onEnter with internal function and move blur there:
+                    // Fix-me: envelope onEnter with internal function
+                    // and move blur there. Or, make an option for
+                    // it??
                     if (rs.isTouchDevice) txtInput.blur(); // Get rid of virtual keyboard.
                     rs.onEnter();    
                     return; 
@@ -411,7 +421,8 @@ function completeLime(container, config) {
         if (keyCode == 40) {     // down
             var m = dropDownController.move(+1);
             if (m == '') { rs.onArrowDown(); }
-            txtHint.value = leftSide+m;
+            // txtHint.value = leftSide+m;
+            setHintValue( leftSide + m );
             e.preventDefault();
             e.stopPropagation();
             return; 
@@ -420,7 +431,8 @@ function completeLime(container, config) {
         if (keyCode == 38 ) {    // up
             var m = dropDownController.move(-1);
             if (m == '') { rs.onArrowUp(); }
-            txtHint.value = leftSide+m;
+            // txtHint.value = leftSide+m;
+            setHintValue( leftSide + m );
             e.preventDefault();
             e.stopPropagation();
             return; 
