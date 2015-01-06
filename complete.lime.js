@@ -253,7 +253,7 @@ function completeLime(container, config) {
 
     function onEnterActions() {
         if (rs.isTouchDevice) txtInput.blur(); // Get rid of virtual keyboard.
-        rs.onEnter();
+        rs.onEnter( dropDown.style.visibility != 'hidden' );
     }
 
     var rs = { 
@@ -262,6 +262,7 @@ function completeLime(container, config) {
         onEnter :     function() {},               // defaults to no action.
         onTab :       function() {},               // defaults to no action.
         onChange:     function() { rs.repaint() }, // defaults to repainting.
+        abortAuto:    function() {},               // for aborting auto comp still in progress after CR
         startFrom:    0,
         options:      [],
         wrapper : wrapper,      // For easy access to the HTML elements to the final user (customizations)
@@ -298,6 +299,7 @@ function completeLime(container, config) {
             
             // updating the hint. 
             txtHint.value ='';
+            // console.log("txtHint.value = '', 1 updating hint", txtInput.value);
             var tokenRegex = new RegExp("^"+token,"i");
             for (var i=0;i<optionsLength;i++) {
                 var opt = options[i];
@@ -413,12 +415,14 @@ function completeLime(container, config) {
             if (txtHint.value.length == 0) { // if there is a hint
                 // if (rs.isTouchDevice) txtInput.blur(); // Get rid of virtual keyboard.
                 // rs.onEnter();
+                // console.log("13 hint length == 0, drop vis=", dropDown.style.visibility);
                 onEnterActions();
             } else {
                 var wasDropDownHidden = (dropDown.style.visibility == 'hidden');
                 dropDownController.hide();
                 
                 if (wasDropDownHidden) {
+                    // console.log("13 dropdown was hidden");
                     txtHint.value = txtInput.value; // ensure that no hint is left.
                     txtInput.focus();
                     // if (rs.isTouchDevice) txtInput.blur(); // Get rid of virtual keyboard.
@@ -427,6 +431,7 @@ function completeLime(container, config) {
                     return; 
                 }
                 
+                // console.log("13 dropdown was visible");
                 // txtInput.value = txtHint.value;
                 copyCarefully2txtInput(txtHint.value); 
                 scrollToEnd();
@@ -438,6 +443,9 @@ function completeLime(container, config) {
                 // dropDown again (as beef and beetroot also match)
                 if (hasTextChanged) {
                     rs.onChange(txtInput.value); // <-- forcing it.
+                } else {
+                    // Fix-me: abort auto
+                    rs.abortAuto();
                 }
                 
             }
@@ -468,12 +476,14 @@ function completeLime(container, config) {
         // think: user presses a letter (e.g. 'x') and never releases... you get (xxxxxxxxxxxxxxxxx)
         // and you would see still the hint
         txtHint.value =''; // resets the txtHint. (it might be updated onKeyUp)
+        // console.log("txtHint.value = '', 2 resetting hint on key down", txtInput.value);
         
     };
 
     var clickHandler = function() {
         // In some browsers there is an "x" to the left in the input
-        // field which clears the field. Reset the txtHint if the input is empty.
+        // field (when the type is "search") which clears the
+        // field. Reset the txtHint if the input is empty.
         //
         // This seems to be necessary to do in a timer, at least in Chrome and IE now.
         // console.log("txtInput clicked", txtInput.value);
@@ -483,6 +493,7 @@ function completeLime(container, config) {
     var blurHandler = function() {
         if (!rs.isTouchDevice) dropDownController.hide();
         txtHint.value ='';
+        // console.log("txtHint.value = '', 3 blur", txtInput.value);
     };
 
     var scrollHandlerDoIt = function() {
