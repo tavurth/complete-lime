@@ -487,7 +487,10 @@ function completeLime(container, config) {
         //
         // This seems to be necessary to do in a timer, at least in Chrome and IE now.
         // console.log("txtInput clicked", txtInput.value);
-        setTimeout(function() { if (txtInput.value.length === 0) { txtHint.value =''; } }, 0);
+        setTimeout(function() {
+            if (txtInput.value.length === 0) { txtHint.value =''; }
+            dropDownController.hide();
+        }, 0);
     };
 
     var blurHandler = function() {
